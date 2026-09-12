@@ -19,7 +19,7 @@ infotainment_analyzer/
 │   │   ├── routes.py         # Всички HTTP маршрути (изнесени от main.py)
 │   │   ├── schemas.py        # Pydantic схеми (request/response валидация)
 │   │   ├── mcda.py            # WSM / AHP / TOPSIS имплементации
-│   │   └── seed_data.py      # Примерни данни за 32 реални модела
+│   │   └── seed_data.py      # Примерни данни за 205 реални модела
 │   ├── models/
 │   │   └── db_models.py      # ORM модели (Manufacturer, CarModel, InfotainmentSpec)
 │   └── frontend/
@@ -27,7 +27,9 @@ infotainment_analyzer/
 │       └── static/
 │           ├── style.css
 │           └── js/             # api.js, state.js, render.js, modal.js, util.js, home.js, results.js
+├── tests/                    # pytest тестове (mcda.py + HTTP маршрути), виж "Тестове" по-долу
 ├── requirements.txt
+├── requirements-dev.txt      # pytest, httpx - само за разработка
 ├── .env.example
 └── README.md
 ```
@@ -90,6 +92,30 @@ Advanced Security → Inbound Rules → New Rule → Port → TCP → 8000 → A
 > автоматично пада обратно на `document.execCommand("copy")` (виж
 > `static/js/home.js`), затова копирането работи и по локалната мрежа.
 
+## Тестове
+
+Тестовете (`tests/`) използват SQLite (файл във временната папка на системата)
+вместо истинската PostgreSQL база, затова не пипат реалните ти данни и не
+изискват стартиран PostgreSQL сървър - `tests/conftest.py` пренасочва
+`DATABASE_URL` преди `app` да бъде импортиран.
+
+**Инсталирай тестовите зависимости** (веднъж, в допълнение на `requirements.txt`):
+```bash
+pip install -r requirements-dev.txt
+```
+
+**Пусни тестовете** (от корена на проекта):
+```bash
+pytest
+```
+
+Покритие:
+- `tests/test_mcda.py` - чисти unit тестове за WSM/AHP/TOPSIS и съпоставянето
+  на потребителски критерии (`mcda.py`), без база данни.
+- `tests/test_routes.py` - интеграционни тестове през `/api/criteria`,
+  `/api/models` и `/rank` (валидация, твърди филтри, трите MCDA метода,
+  съпоставяне на custom критерий, лимит на резултатите).
+
 ## Какво да довършиш за тезата
 1. **Количествени/субективни показатели** — качествените/категорийните
    характеристики в `seed_data.py` (тип ОС, CarPlay/Android Auto, физически
@@ -108,5 +134,6 @@ Advanced Security → Inbound Rules → New Rule → Port → TCP → 8000 → A
    съответствие с класическия AHP метод можеш да добавиш отделен UI екран
    с директно въвеждане на pairwise сравнения (1-9 скала на Saaty) —
    функцията `ahp_weights()` в `mcda.py` вече приема готова матрица.
-3. **Валидация/тестове** — добави `pytest` тестове за `mcda.py` (независим
-   е от FastAPI/базата, лесно се тества изолирано).
+3. ~~**Валидация/тестове**~~ — готово, виж секция "Тестове" по-горе
+   (`pytest`, unit тестове за `mcda.py` + интеграционни тестове за `/rank` и
+   останалите маршрути).
