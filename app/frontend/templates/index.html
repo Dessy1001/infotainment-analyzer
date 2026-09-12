@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Анализ на инфотейнмънт системи</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚗</text></svg>">
+    <link rel="stylesheet" href="/static/style.css?v={{ css_version }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.1/chart.umd.min.js"
+            integrity="sha512-WoViKhKD4qI2WruSZqv9+kvM4WfFhUMQCLN4QlDTt5aU56fLQy2gYoxWIqlEnXqJy/+Ac5q/hk1oWfqnMDhwMA=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+<body>
+    <section id="hero" class="hero">
+        <div class="hero-glow hero-glow-1" aria-hidden="true"></div>
+        <div class="hero-glow hero-glow-2" aria-hidden="true"></div>
+
+        <div class="hero-inner">
+            <h1>Кой автомобил има <span class="accent-text">най-добрата инфотейнмънт система</span> за теб?</h1>
+            <p class="hero-subtitle">
+                Сравни хибридни и електромобили по критериите, които наистина имат значение за теб —
+                гласово управление, CarPlay, навигация, физически бутони и още — с три утвърдени метода
+                за многокритериен анализ: WSM, AHP и TOPSIS.
+            </p>
+
+            <div class="hero-steps">
+                <div class="hero-step"><span class="step-num">1</span> Избери метод и важните за теб функции</div>
+                <div class="hero-step"><span class="step-num">2</span> По избор — стесни до конкретни марки/модели</div>
+                <div class="hero-step"><span class="step-num">3</span> Виж класирането и графиката</div>
+            </div>
+
+            <button id="start-btn" class="start-btn" type="button">Започни <span aria-hidden="true">↓</span></button>
+        </div>
+
+        <button id="scroll-indicator" class="scroll-indicator" type="button" aria-label="Превърти надолу към формата">
+            <span aria-hidden="true">↓</span>
+        </button>
+    </section>
+
+    <main id="app">
+        <section class="panel">
+            <h2><span class="step-badge">1</span> Метод за многокритериен анализ</h2>
+            <select id="method">
+                <option value="wsm">WSM — Weighted Sum Model</option>
+                <option value="topsis">TOPSIS</option>
+                <option value="ahp">AHP — Analytic Hierarchy Process</option>
+            </select>
+            <p class="hint method-explanation" id="method-explanation"></p>
+        </section>
+
+        <section class="panel">
+            <h2><span class="step-badge">2</span> Кои функции са важни за вас?</h2>
+            <p class="hint">Маркирай функциите, които имат значение за теб. При WSM и TOPSIS всеки чекбокс има поле за тегло — впиши число от 1 до 10, за да завишиш важността му (празно = равна важност за всички, стойности над 10 се ограничават до 10).</p>
+
+            <div class="criteria-groups" id="feature-checkboxes">
+                <p class="hint">Зареждане на критериите…</p>
+            </div>
+
+            <div class="custom-criterion-row">
+                <label for="custom-criterion">
+                    Друг критерий (по избор)
+                    <button type="button" class="info-btn" id="custom-criterion-info" aria-label="Примери за критерии, които могат да съвпаднат">ⓘ</button>
+                </label>
+                <input type="text" id="custom-criterion" placeholder="напр. размер на дисплея, безопасност…">
+                <p class="hint">Можеш да въведеш няколко критерия, разделени със запетая. Всеки, който съвпадне с критерий в базата, ще бъде добавен; останалите се игнорират.</p>
+                <p class="feedback" id="custom-criterion-feedback"></p>
+            </div>
+        </section>
+
+        <section class="panel">
+            <h2><span class="step-badge">3</span> Сравнение на конкретни модели (по избор)</h2>
+            <p class="hint">Ако вече се колебаеш между няколко коли (напр. със сходна цена/клас), маркирай ги тук — класирането ще включва само тях. Маркирай марка, за да стесниш списъка с модели по-долу.</p>
+
+            <input type="text" id="brand-model-filter" placeholder="Филтрирай по марка или модел… (напр. Audi, VW)" aria-label="Филтрирай марки и модели">
+
+            <p class="subheading">Марка</p>
+            <div class="feature-grid" id="brand-checkboxes">
+                <p class="hint">Зареждане на марките…</p>
+            </div>
+            <button type="button" class="link-btn" id="brands-toggle-more" hidden></button>
+
+            <p class="subheading">
+                Модел
+                <span class="model-select-actions" id="model-select-actions" hidden>
+                    <button type="button" class="link-btn" id="models-select-all">Маркирай всички</button>
+                    <button type="button" class="link-btn" id="models-clear">Изчисти</button>
+                </span>
+            </p>
+            <div class="feature-grid" id="model-checkboxes">
+                <p class="hint">Зареждане на моделите…</p>
+            </div>
+        </section>
+
+        <section class="panel">
+            <h2><span class="step-badge">4</span> Задължителни изисквания (hard filters)</h2>
+            <label class="checkbox-row"><input type="checkbox" id="f-buttons"> Изисква физически бутони</label>
+            <label class="checkbox-row"><input type="checkbox" id="f-android"> Изисква Android Auto</label>
+            <label class="checkbox-row"><input type="checkbox" id="f-carplay"> Изисква CarPlay</label>
+            <label class="checkbox-row"><input type="checkbox" id="f-voice"> Изисква гласово управление</label>
+            <label class="checkbox-row"><input type="checkbox" id="f-ota"> Изисква OTA ъпдейти</label>
+            <div class="field-row">
+                <label for="f-display">Мин. размер дисплей (инча)</label>
+                <input type="number" id="f-display" min="0" max="20" step="0.1" value="0">
+            </div>
+        </section>
+
+        <button id="submit-btn">Класирай моделите</button>
+
+        <section class="panel" id="results-panel" style="display:none;">
+            <h2>Резултати</h2>
+            <p class="hint" id="consistency-note"></p>
+            <div class="share-row">
+                <button type="button" class="link-btn" id="copy-results-link">🔗 Копирай линк към резултатите</button>
+                <span class="feedback" id="copy-results-feedback"></span>
+            </div>
+            <div class="chart-wrap">
+                <canvas id="results-chart"></canvas>
+            </div>
+            <div class="table-scroll">
+                <table id="results-table">
+                    <thead>
+                        <tr><th>#</th><th>Марка</th><th>Модел</th><th>Година</th><th>Резултат</th><th>Покрити критерии</th><th></th></tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </section>
+
+        <footer class="page-footer">
+            <p>Дипломна работа — Информационна система за анализ на инфотейнмънт системи в хибридни и електромобили</p>
+        </footer>
+    </main>
+
+    <button id="back-to-top" class="back-to-top" type="button" aria-label="Обратно към началото">↑</button>
+
+    <div class="modal-backdrop" id="info-modal-backdrop" hidden>
+        <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="info-modal-title">
+            <div class="modal-header">
+                <h3 id="info-modal-title"></h3>
+                <button type="button" class="modal-close" id="info-modal-close" aria-label="Затвори">×</button>
+            </div>
+            <div class="modal-body" id="info-modal-body"></div>
+        </div>
+    </div>
+
+    <script type="module" src="/static/js/home.js?v={{ js_version }}"></script>
+</body>
+</html>

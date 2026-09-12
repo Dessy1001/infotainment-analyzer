@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Резултати от анализа</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚗</text></svg>">
+    <link rel="stylesheet" href="/static/style.css?v={{ css_version }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.1/chart.umd.min.js"
+            integrity="sha512-WoViKhKD4qI2WruSZqv9+kvM4WfFhUMQCLN4QlDTt5aU56fLQy2gYoxWIqlEnXqJy/+Ac5q/hk1oWfqnMDhwMA=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+<body>
+    <main id="results-page">
+        <header class="results-page-header">
+            <h1>Резултати от класирането</h1>
+            <a href="/" class="link-btn">← Промени критериите</a>
+        </header>
+
+        <p class="hint" id="results-status"></p>
+
+        <section class="panel" id="results-panel" style="display:none;">
+            <h2>Резултати</h2>
+            <p class="hint" id="consistency-note"></p>
+            <div class="chart-wrap">
+                <canvas id="results-chart"></canvas>
+            </div>
+            <div class="table-scroll">
+                <table id="results-table">
+                    <thead>
+                        <tr><th>#</th><th>Марка</th><th>Модел</th><th>Година</th><th>Резултат</th><th>Покрити критерии</th><th></th></tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </section>
+
+        <footer class="page-footer">
+            <p>Дипломна работа — Информационна система за анализ на инфотейнмънт системи в хибридни и електромобили</p>
+        </footer>
+    </main>
+
+    <div class="modal-backdrop" id="info-modal-backdrop" hidden>
+        <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="info-modal-title">
+            <div class="modal-header">
+                <h3 id="info-modal-title"></h3>
+                <button type="button" class="modal-close" id="info-modal-close" aria-label="Затвори">×</button>
+            </div>
+            <div class="modal-body" id="info-modal-body"></div>
+        </div>
+    </div>
+
+    <script type="module" src="/static/js/results.js?v={{ js_version }}"></script>
+</body>
+</html>
