@@ -109,8 +109,7 @@ def _apply_hard_filters(cars: list[CarModel], filters: HardFilters) -> list[CarM
 @router.get("/", response_class=HTMLResponse)
 def index(request: Request):
     version = _asset_version()
-    response = templates.TemplateResponse("index.html", {
-        "request": request,
+    response = templates.TemplateResponse(request, "index.html", {
         "css_version": version,
         "js_version": version,
     })
@@ -261,8 +260,7 @@ def rank_models(payload: RankRequest, db: Session = Depends(get_db)) -> RankResp
 @router.get("/results", response_class=HTMLResponse)
 def results_page(request: Request):
     version = _asset_version()
-    response = templates.TemplateResponse("results.html", {
-        "request": request,
+    response = templates.TemplateResponse(request, "results.html", {
         "css_version": version,
         "js_version": version,
     })

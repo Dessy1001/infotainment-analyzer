@@ -3,6 +3,7 @@ venv/
 __pycache__/
 *.pyc
 .env
+.pytest_cache/
 Alfa.md
 Audi.md
 BMW.md
